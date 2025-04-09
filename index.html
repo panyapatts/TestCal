@@ -6,12 +6,11 @@
   <title>Responsive Calculator Tabs</title>
   <style>
     :root {
-      --primary: #adadad;
+      --primary: #4f46e5;
       --bg: #f9fafb;
       --white: #ffffff;
-      --text: #12171d;
+      --text: #1f2937;
       --border: #d1d5db;
-      --active: #5398ff;
     }
 
     body {
@@ -46,12 +45,12 @@
     }
 
     .tab:hover {
-      background-color: #3883ca;
+      background-color: #4338ca;
     }
 
     .tab.active {
-      background-color: var(--active);
-      color: var(--text);
+      background-color: var(--white);
+      color: var(--primary);
       font-weight: bold;
     }
 
@@ -105,23 +104,31 @@
 <body>
   <div class="container">
     <div class="tabs">
-      <div class="tab active" data-tab="Alu1">Al. less than 12</div>
+      <div class="tab active" data-tab="A">A</div>
       <div class="tab" data-tab="B">B</div>
       <div class="tab" data-tab="C">C</div>
     </div>
 
-    <div id="Alu1" class="tab-content active">
+    <div id="A" class="tab-content active">
       <div class="input-group">
-        <span>Cutting speed</span><input type="number" step="any" class="x" /><span>xx</span>
+        <span>Cutting speed Cs 500-1500</span><input type="number" step="any" class="cs" /><span>m/min</span>
       </div>
       <div class="input-group">
-        <span>Tool diameter</span><input type="number" step="any" class="y" />
+        <span>Tool diameter</span><input type="number" step="any" class="d" /><span>mm</span>
       </div>
       <div class="input-group">
-        <span>Z</span><input type="number" step="any" class="z" />
+        <span>Teeth</span><input type="number" step="any" class="z" />
       </div>
-      <div class="result">calculation is: <span class="output">-</span></div>
+      <div class="input-group">
+        <span>R</span><input type="number" step="any" class="r" />
+      </div>
+      <div class="input-group">
+        <span>CT</span><input type="number" step="any" class="ct" />
+      </div>
+      <div class="result">Machine speed is: <span class="output_N">-</span></div>
+      <div class="result">F/rev is: <span class="output_Frev">-</span></div>
     </div>
+
 
     <div id="B" class="tab-content">
       <div class="input-group">
@@ -131,9 +138,10 @@
         <span>B</span><input type="number" step="any" class="y" />
       </div>
       <div class="input-group">
-        <span>Z</span><input type="number" step="any" class="z" />
+        <span>Z</span><input type="number" step="any" class="zz" />
       </div>
       <div class="result">calculation is: <span class="output">-</span></div>
+      <div class="result">Cal2 is: <span class="output2">-</span></div>
     </div>
 
     <div id="C" class="tab-content">
@@ -144,9 +152,10 @@
         <span>B</span><input type="number" step="any" class="y" />
       </div>
       <div class="input-group">
-        <span>Z</span><input type="number" step="any" class="z" />
+        <span>Z</span><input type="number" step="any" class="zz" />
       </div>
-      <div class="result">calculation is: <span class="output">-</span></div>
+      <div class="result">N is: <span class="output">-</span></div>
+      <div class="result">Cal2 is: <span class="output2">-</span></div>
     </div>
   </div>
 
@@ -165,33 +174,63 @@
     });
 
     function updateCalculation(section) {
-      const xInput = section.querySelector('.x');
-      const yInput = section.querySelector('.y');
+      const csInput = section.querySelector('.cs');
+      const dInput = section.querySelector('.d');
       const zInput = section.querySelector('.z');
+      const rInput = section.querySelector('.r');
+      const ctInput = section.querySelector('.ct');
 
-      const x = parseFloat(xInput.value);
-      const y = parseFloat(yInput.value);
+      const cs = parseFloat(csInput.value);
+      const d = parseFloat(dInput.value);
       const z = parseFloat(zInput.value);
+      const r = parseFloat(rInput.value);
+      const ct = parseFloat(ctInput.value);
 
-      const output = section.querySelector('.output');
-      const missing = [];
+      const output_N = section.querySelector('.output_N');
+      const output_Frev = section.querySelector('.output_Frev');
+      //const missing = [];
+      const missing_N_cal = [];
+      const missing_Frev_cal = [];
 
-      if (isNaN(x)) missing.push("x");
+      if (isNaN(cs)) missing_N_cal.push("cs");
+      if (isNaN(d)) missing_N_cal.push("d");
+
+      if (isNaN(z)) missing_Frev_cal.push("z");
+      if (isNaN(ct)) missing_Frev_cal.push("ct");
+      /* if (isNaN(x)) missing.push("x");
       if (isNaN(y)) missing.push("y");
-      if (isNaN(z)) missing.push("z");
+      if (isNaN(z)) missing.push("z"); */
+      
 
-      if (missing.length > 0) {
+      if (missing_N_cal.length > 0) {
+        output_N.textContent = `Please enter value${missing_N_cal.length > 1 ? 's' : ''} for ${missing_N_cal.join(', ')}`;
+        
+        return;
+      }
+      const result_N = (cs * 1000) / (d * 3.14);
+      output_N.textContent = result_N.toFixed(4);
+
+      if (missing_Frev_cal.length > 0) {
+        output_Frev.textContent = `Please enter value${missing_Frev_cal.length > 1 ? 's' : ''} for ${missing_Frev_cal.join(', ')}`;
+        return;
+      }
+      /* if (missing.length > 0) {
         output.textContent = `Please enter value${missing.length > 1 ? 's' : ''} for ${missing.join(', ')}`;
+        output2.textContent = `Please enter value${missing.length > 1 ? 's' : ''} for ${missing.join(', ')}`;
         return;
-      }
+      } */
 
-      if (z === 0) {
+      /* if (z === 0) {
         output.textContent = "z cannot be zero";
+        output2.textContent = "-";
         return;
-      }
+      } */
 
-      const result = (x + y) / z;
-      output.textContent = result.toFixed(4);
+      
+      //const ct = result_N * cs * z;
+      const result_Frev = result_N * ct * z;
+      
+      output_Frev.textContent = result_Frev.toFixed(4);
     }
 
     contents.forEach(section => {
