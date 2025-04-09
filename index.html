@@ -1,1 +1,204 @@
-<html>hi4</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Responsive Calculator Tabs</title>
+  <style>
+    :root {
+      --primary: #adadad;
+      --bg: #f9fafb;
+      --white: #ffffff;
+      --text: #12171d;
+      --border: #d1d5db;
+      --active: #5398ff;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      margin: 0;
+      padding: 0;
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .tabs {
+      display: flex;
+      background-color: var(--primary);
+    }
+
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      color: var(--white);
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .tab:hover {
+      background-color: #3883ca;
+    }
+
+    .tab.active {
+      background-color: var(--active);
+      color: var(--text);
+      font-weight: bold;
+    }
+
+    .tab-content {
+      display: none;
+      padding: 24px;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .input-group span {
+      min-width: 20px;
+      font-weight: bold;
+    }
+
+    input[type="number"] {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    .result {
+      margin-top: 16px;
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    @media (max-width: 640px) {
+      .tabs {
+        flex-direction: column;
+      }
+      .tab {
+        border-bottom: 1px solid var(--border);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="tabs">
+      <div class="tab active" data-tab="Alu1">Al. less than 12</div>
+      <div class="tab" data-tab="B">B</div>
+      <div class="tab" data-tab="C">C</div>
+    </div>
+
+    <div id="Alu1" class="tab-content active">
+      <div class="input-group">
+        <span>Cutting speed</span><input type="number" step="any" class="x" /><span>xx</span>
+      </div>
+      <div class="input-group">
+        <span>Tool diameter</span><input type="number" step="any" class="y" />
+      </div>
+      <div class="input-group">
+        <span>Z</span><input type="number" step="any" class="z" />
+      </div>
+      <div class="result">calculation is: <span class="output">-</span></div>
+    </div>
+
+    <div id="B" class="tab-content">
+      <div class="input-group">
+        <span>A</span><input type="number" step="any" class="x" />
+      </div>
+      <div class="input-group">
+        <span>B</span><input type="number" step="any" class="y" />
+      </div>
+      <div class="input-group">
+        <span>Z</span><input type="number" step="any" class="z" />
+      </div>
+      <div class="result">calculation is: <span class="output">-</span></div>
+    </div>
+
+    <div id="C" class="tab-content">
+      <div class="input-group">
+        <span>A</span><input type="number" step="any" class="x" />
+      </div>
+      <div class="input-group">
+        <span>B</span><input type="number" step="any" class="y" />
+      </div>
+      <div class="input-group">
+        <span>Z</span><input type="number" step="any" class="z" />
+      </div>
+      <div class="result">calculation is: <span class="output">-</span></div>
+    </div>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
+
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    function updateCalculation(section) {
+      const xInput = section.querySelector('.x');
+      const yInput = section.querySelector('.y');
+      const zInput = section.querySelector('.z');
+
+      const x = parseFloat(xInput.value);
+      const y = parseFloat(yInput.value);
+      const z = parseFloat(zInput.value);
+
+      const output = section.querySelector('.output');
+      const missing = [];
+
+      if (isNaN(x)) missing.push("x");
+      if (isNaN(y)) missing.push("y");
+      if (isNaN(z)) missing.push("z");
+
+      if (missing.length > 0) {
+        output.textContent = `Please enter value${missing.length > 1 ? 's' : ''} for ${missing.join(', ')}`;
+        return;
+      }
+
+      if (z === 0) {
+        output.textContent = "z cannot be zero";
+        return;
+      }
+
+      const result = (x + y) / z;
+      output.textContent = result.toFixed(4);
+    }
+
+    contents.forEach(section => {
+      section.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', () => updateCalculation(section));
+      });
+    });
+  </script>
+</body>
+</html>
